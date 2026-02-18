@@ -1,14 +1,20 @@
 const express = require("express");
 const connectMongoDB = require("./connect");
+require("dotenv").config();
+
 const urlRoutes = require("./routers/url");
 
 const app = express();
+const mongoURL = process.env.MONGO_URL;
 
-const url = "mongodb://localhost:27017/urlshortner";
+connectMongoDB(mongoURL)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
-connectMongoDB(url)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB Connection Error:", err));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -25,6 +31,8 @@ app.get("/", async (req, res) => {
   });
 });
 
-app.listen(8000, () => {
-  console.log("Server running on port 8000");
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
