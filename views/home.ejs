@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px;
+      background-color: #f4f6f8;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+      margin-bottom: 30px;
+    }
+
+    input {
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 120px;
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .generated {
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #e6f7ff;
+      border: 1px solid #91d5ff;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>URL Shortener</h1>
+
+  <% if (locals.id) { %>
+    <div class="generated">
+      Generated URL:
+      <a target="_blank" href="http://localhost:8000/url/<%= locals.id %>">
+        http://localhost:8000/url/<%= locals.id %>
+      </a>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/url">
+    <label>Enter Your URL</label>
+    <input
+      type="text"
+      name="url"
+      placeholder="https://example.com"
+      required
+    />
+    <button type="submit">Generate</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Index</th>
+        <th>Short ID</th>
+        <th>Redirect URL</th>
+        <th>Clicks</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if (locals.urls && locals.urls.length > 0) { %>
+        <% locals.urls.forEach(function(url, index) { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td>
+              <a target="_blank" href="http://localhost:8000/url/<%= url.shortId %>">
+                <%= url.shortId %>
+              </a>
+            </td>
+            <td>
+              <a href="<%= url.redirectURL %>" target="_blank">
+                <%= url.redirectURL %>
+              </a>
+            </td>
+            <td><%= url.visitHistory.length %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="4">No URLs found</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+</body>
+</html>
